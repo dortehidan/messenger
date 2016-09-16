@@ -19,6 +19,7 @@ public class Observation {
 	private String userId; //AH
 	
 	//private Location location;
+	// this is just a comment to see changes in Git.
 	
 	//component
 	private String observationState; //like "morning", "two hours after",etc
