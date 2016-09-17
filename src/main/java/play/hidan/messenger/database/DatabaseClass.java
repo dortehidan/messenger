@@ -30,13 +30,14 @@ public class DatabaseClass {
 		}
 		try {
 			
-			// Couchbase 4.5
-			//cluster = CouchbaseCluster.create("ec2-54-200-95-47.us-west-2.compute.amazonaws.com");
-		    //bucket = cluster.openBucket("memylifePOC");
-
+			//TO-DO
+			// get ref to db in a configfile.
+			String bucketName = "";
+			String clusterRef = "";
+			
 			// Couchbase 4.0.0
-			cluster = CouchbaseCluster.create("ec2-52-34-116-157.us-west-2.compute.amazonaws.com");
-		    bucket = cluster.openBucket("memylifePOC");
+			cluster = CouchbaseCluster.create(clusterRef);
+		    bucket = cluster.openBucket(bucketName);
 		    
 		    // Create a N1QL Primary Index (but ignore if it exists)
 	        bucket.bucketManager().createN1qlPrimaryIndex(true, false);
