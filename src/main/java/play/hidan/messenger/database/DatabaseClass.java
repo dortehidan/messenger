@@ -32,8 +32,7 @@ public class DatabaseClass {
 			
 			//TO-DO
 			// get ref to db in a configfile.
-			String bucketName = "";
-			String clusterRef = "";
+			
 			
 			// Couchbase 4.0.0
 			cluster = CouchbaseCluster.create(clusterRef);
