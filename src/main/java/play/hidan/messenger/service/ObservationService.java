@@ -20,6 +20,8 @@ import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
 import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.transcoder.JsonTranscoder;
+import com.google.gson.Gson;
 
 import play.hidan.messenger.database.DatabaseClass;
 import play.hidan.messenger.model.Message;
@@ -39,10 +41,7 @@ public class ObservationService {
 		//bucket.get(arg0)
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		//String resType = "observation";
-//		Statement statement = select("docid", "subType", "userid", "observationstate","valueDouble","comment").from(i(bucket.name())).where(x("ressourcetype").eq(x("observation")));
-//		Statement statement = select("docid","subType", "userid", "observationstate","comment","value","observationcreated").from(i(bucket.name())); //.where(x("ressourcetype").eq(x("observation")));
-		Statement statement = select("resourceType","docId","subType", "userId", "observationState","comment","valueDouble","observationCreated").from(i(bucket.name())).where(x("resourceType").eq(x("$resType")));
+		Statement statement = select("resourceType","docId","subType", "userId", "observationState","comment","observationCreated").from(i(bucket.name())).where(x("resourceType").eq(x("$resType")));
 		JsonObject placeholderValues = JsonObject.create().put("resType", "observation");
 		//N1qlQuery q = N1qlQuery.simple(statement);
 		N1qlQuery q = N1qlQuery.parameterized(statement, placeholderValues);
@@ -64,20 +63,13 @@ public class ObservationService {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
 			}
-//			o.setValue(j.getString("value"));
-			
-			if (j.getDouble("valueDouble") != null) {
-				o.setValueDouble(j.getDouble("valueDouble"));
-			};
-			
+		
 			o.setRessourceType(j.getString("resourceType"));
 			
 			o.setDocId(j.getString("docId"));
 			o.setSubType(j.getString("subType"));
 			o.setUserId(j.getString("userId"));
 			o.setObservationState(j.getString("observationState"));
-			
-						
 			o.setComment(j.getString("comment"));
 						
 			observations.put(o.getDocId(), o);
@@ -121,7 +113,19 @@ public class ObservationService {
 			observation.setObservationCreated(d);
 		}
 		
-		JsonObject jdoc = JsonObject.create()
+		Gson gson = new Gson();
+		String json = gson.toJson(observation);
+		
+		JsonTranscoder trans = new JsonTranscoder();
+		JsonObject jsonObj = JsonObject.create();
+		try {
+			jsonObj = trans.stringToJsonObject(json);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*JsonObject jdoc = JsonObject.create()
 		 .put("docId", observation.getDocId())		
 		 .put("resourceType", observation.getRessourceType())
 		 .put("observationCreated", dateFormat.format(observation.getObservationCreated()))
@@ -131,11 +135,13 @@ public class ObservationService {
 		 .put("observationState", observation.getObservationState())
 		 .put("valueDouble", observation.getValueDouble())
 		 .put("unit", observation.getUnit())
-		 .put("comment", observation.getComment());
+		 .put("comment", observation.getComment())
+		 ;*/
 		 
 
 		// Store the Document
-        bucket.upsert(JsonDocument.create(observation.getDocId(), jdoc));
+        //bucket.upsert(JsonDocument.create(observation.getDocId(), jdoc));
+        bucket.upsert(JsonDocument.create(observation.getDocId(), jsonObj));
 
 		return observation;
 	}

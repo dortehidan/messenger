@@ -10,8 +10,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="play.hidan.messenger.model.ValueType" project="messenger" 
-    file="/messenger/src/main/java/play/hidan/messenger/model/ValueType.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="play.hidan.messenger.model.ValueComponent" project="messenger" 
+    file="/messenger/src/main/java/play/hidan/messenger/model/ValueComponent.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="658" width="371" x="1557" y="174"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

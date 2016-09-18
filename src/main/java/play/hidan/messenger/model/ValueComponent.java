@@ -1,18 +1,17 @@
 package play.hidan.messenger.model;
 
-public class ValueType {
+public class ValueComponent {
 	
 	//ValueQuantity
 	private String valueString;
-	private long valueLong;
 	private double valueDouble;
 	
 	private String unit; //
-	private String codeDisplay;  // Glucose [Moles/volume] in Blood
+	private String valueType;  // Glucose [Moles/volume] in Blood
 	
 	
 		
-	public ValueType() {
+	public ValueComponent() {
 		
 	}
 
@@ -27,19 +26,6 @@ public class ValueType {
 	public void setValueString(String valueString) {
 		this.valueString = valueString;
 	}
-
-
-
-	public long getValueLong() {
-		return valueLong;
-	}
-
-
-
-	public void setValueLong(long valueLong) {
-		this.valueLong = valueLong;
-	}
-
 
 
 	public double getValueDouble() {
@@ -66,16 +52,19 @@ public class ValueType {
 
 
 
-	public String getCodeDisplay() {
-		return codeDisplay;
+	public String getValueType() {
+		return valueType;
 	}
 
 
 
-	public void setCodeDisplay(String codeDisplay) {
-		this.codeDisplay = codeDisplay;
+	public void setValueType(String valueType) {
+		this.valueType = valueType;
 	}
-	
+
+
+
+		
 	
 	
 	

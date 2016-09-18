@@ -47,3 +47,5 @@ Temporary Items
 .apdisk
 src/main/java/play/hidan/messenger/database/DatabaseClass.java
 target/classes/play/hidan/messenger/database/DatabaseClass.class
+target/classes/play/hidan/messenger/database/Configuration.class
+src/main/java/play/hidan/messenger/database/Configuration.java

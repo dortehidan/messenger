@@ -1,4 +1,4 @@
-package play.hidan.messenger.ressources;
+package play.hidan.messenger.resources;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import play.hidan.messenger.service.MessageService;
 import play.hidan.messenger.service.ObservationService;
 
 @Path("/observations")
-public class ObservationRessource {
+public class ObservationResource {
 
 	 ObservationService observationService = new ObservationService();
 	

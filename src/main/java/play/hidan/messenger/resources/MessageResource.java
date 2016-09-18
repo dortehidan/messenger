@@ -1,4 +1,4 @@
-package play.hidan.messenger.ressources;
+package play.hidan.messenger.resources;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import play.hidan.messenger.model.Message;
 import play.hidan.messenger.service.MessageService;
 
 @Path("/messages")
-public class MessageRessource {
+public class MessageResource {
 
 	 MessageService messageservice = new MessageService();
 	
