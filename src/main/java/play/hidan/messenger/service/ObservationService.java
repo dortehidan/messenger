@@ -37,24 +37,61 @@ public class ObservationService {
 		
 	}
 	
-	public List<Observation> getAllObservations(){
-		//bucket.get(arg0)
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public List<Observation> getAllObservations(String systemId, String userId){
+
+		//DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Gson gson = new Gson();
+		observations.clear();
 		
-		Statement statement = select("resourceType","docId","subType", "userId", "observationState","comment","observationCreated").from(i(bucket.name())).where(x("resourceType").eq(x("$resType")));
-		JsonObject placeholderValues = JsonObject.create().put("resType", "observation");
-		//N1qlQuery q = N1qlQuery.simple(statement);
+		if (userId==null){
+			return new ArrayList<Observation> (observations.values());
+		}
+		
+		Statement statement;
+		
+		if (systemId==null){
+			statement = select("resourceType","docId","systemId", "subType", "userId", "observationState","comment","observationCreated")
+					.from(i(bucket.name()))
+					.where(x("resourceType").eq(x("$resType"))
+					.and(x("userId").eq(x("$userId"))));
+			
+		} else {
+			statement = select("resourceType","docId","systemId", "subType", "userId", "observationState","comment","observationCreated")
+					.from(i(bucket.name()))
+					.where(x("resourceType").eq(x("$resType"))
+					.and(x("userId").eq(x("$userId")))
+					.and(x("systemId").eq(x("$systemId"))));			
+			
+		}
+		
+		JsonObject placeholderValues = JsonObject.create()
+								.put("resType", "observation")
+								.put("systemId", systemId)
+								.put("userId", userId);
+		
+		
+		String s = "Select docId from " + bucket.name() + " where resourceType";
 		N1qlQuery q = N1qlQuery.parameterized(statement, placeholderValues);
 		
-		observations.clear();
 						
 		for (N1qlQueryRow row : bucket.query(q)) {
 
 			JsonObject j = row.value();
 			Observation o = new Observation(false);
 			
+			JsonTranscoder trans = new JsonTranscoder();
+			JsonObject jsonObj = JsonObject.create();
+			String jString=null;
+			try {
+				jString = trans.jsonObjectToString(j);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			o = gson.fromJson(jString,o.getClass());
 			
-			String ds = j.getString("observationCreated");
+			
+/*			String ds = j.getString("observationCreated");
 			Date date = null;
 			try {
 				date = dateFormat.parse(ds);
@@ -64,14 +101,79 @@ public class ObservationService {
 				//e.printStackTrace();
 			}
 		
-			o.setRessourceType(j.getString("resourceType"));
+			o.setResourceType(j.getString("resourceType"));
 			
 			o.setDocId(j.getString("docId"));
 			o.setSubType(j.getString("subType"));
 			o.setUserId(j.getString("userId"));
 			o.setObservationState(j.getString("observationState"));
-			o.setComment(j.getString("comment"));
+			o.setComment(j.getString("comment") + " Date: " + ds);
+			o.setSystemId(j.getString("systemId"));
+*/						
+			observations.put(o.getDocId(), o);
+			
+		}
+		
+		return new ArrayList<Observation> (observations.values());
+	}
+	
+	public List<Observation> getObservationsBySubtype(String systemId, String userId, String subType){
+
+		Gson gson = new Gson();
+		observations.clear();
+		
+		if (userId==null){
+			return new ArrayList<Observation> (observations.values());
+		}
+
+		if (subType==null){
+			return new ArrayList<Observation> (observations.values());
+		}
+
+		
+		Statement statement;
+		
+		if (systemId==null){
+				statement = select("resourceType","docId","systemId", "subType", "userId", "observationState","comment","observationCreated")
+						.from(i(bucket.name()))
+						.where(x("resourceType").eq(x("$resType"))
+						.and(x("userId").eq(x("$userId")))
+						.and(x("subType").eq(x("$subType"))));
+		} else {
+			statement = select("resourceType","docId","systemId", "subType", "userId", "observationState","comment","observationCreated")
+					.from(i(bucket.name()))
+					.where(x("resourceType").eq(x("$resType"))
+					.and(x("userId").eq(x("$userId")))
+					.and(x("systemId").eq(x("$systemId")))
+					.and(x("subType").eq(x("$subType"))));
+		}
+		
+		JsonObject placeholderValues = JsonObject.create()
+								.put("resType", "observation")
+								.put("systemId", systemId)
+								.put("subType", subType)
+								.put("userId", userId);
+		
+		
+		N1qlQuery q = N1qlQuery.parameterized(statement, placeholderValues);
+		
 						
+		for (N1qlQueryRow row : bucket.query(q)) {
+
+			JsonObject j = row.value();
+			Observation o = new Observation(false);
+			
+			JsonTranscoder trans = new JsonTranscoder();
+			JsonObject jsonObj = JsonObject.create();
+			String jString=null;
+			try {
+				jString = trans.jsonObjectToString(j);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			o = gson.fromJson(jString,o.getClass());
+
 			observations.put(o.getDocId(), o);
 			
 		}
@@ -80,27 +182,65 @@ public class ObservationService {
 	}
 
 		
-	/*public Message getMessageById(long id) {
+	public Observation getObservationById(String id) {
 		
 		
-		Statement statement = select("id", "message", "author").from(i(bucket.name())).where(x("id").eq(x("$id")));
-		JsonObject placeholderValues = JsonObject.create().put("id", String.valueOf(id));
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		Statement statement = select("resourceType","docId","subType", "userId", "observationState","comment","observationCreated","valueComponents")
+				.from(i(bucket.name()))
+		    	.where(x("resourceType").eq(x("$resourceType")).and(x("docId").eq(x("$docId"))));
+
+		JsonObject placeholderValues = JsonObject.create()
+									.put("docId", id)
+									.put("resourceType", "observation");
+				
 		N1qlQuery q = N1qlQuery.parameterized(statement, placeholderValues);
 		
-		messages.clear();
-		
+		observations.clear();
+		Gson gson = new Gson();
+						
 		for (N1qlQueryRow row : bucket.query(q)) {
 
 			JsonObject j = row.value();
-			Message m = new Message(j.getString("id"));
-			m.setAuthor(j.getString("author"));
-			m.setMessage(j.getString("message"));
-			messages.put(m.getId(), m);
+			Observation o = new Observation(false);
+			
+			JsonTranscoder trans = new JsonTranscoder();
+			JsonObject jsonObj = JsonObject.create();
+			String jString=null;
+			try {
+				jString = trans.jsonObjectToString(j);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			o = gson.fromJson(jString,o.getClass());
+			
+			
+			/*String ds = j.getString("observationCreated");
+			Date date = null;
+			try {
+				date = dateFormat.parse(ds);
+				o.setObservationCreated(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		
+			o.setResourceType(j.getString("resourceType"));
+			
+			o.setDocId(j.getString("docId"));
+			o.setSubType(j.getString("subType"));
+			o.setUserId(j.getString("userId"));
+			o.setObservationState(j.getString("observationState"));
+			o.setComment(j.getString("comment"));
+			*/			
+			observations.put(o.getDocId(), o);
 			
 		}
 	
-		return messages.get(id);
-	}*/
+		return observations.get(id);
+	}
 	
 	public Observation addObservation(Observation observation){
 		
@@ -108,7 +248,7 @@ public class ObservationService {
 		Date d = new Date();
 		
 		observation.setDocId("obs:" + UUID.randomUUID().toString());
-		observation.setRessourceType("observation");
+		observation.setResourceType("observation");
 		if (observation.getObservationCreated() == null) {
 			observation.setObservationCreated(d);
 		}
@@ -135,7 +275,7 @@ public class ObservationService {
 		 .put("observationState", observation.getObservationState())
 		 .put("valueDouble", observation.getValueDouble())
 		 .put("unit", observation.getUnit())
-		 .put("comment", observation.getComment())
+		 .put("comment", observation.get Comment())
 		 ;*/
 		 
 
@@ -154,8 +294,14 @@ public class ObservationService {
 //		return message;
 //	}
 	
-//	public void removeMessage(Long id) {
-//		messages.remove(id);
-//	}
+	/*public Observation removeObservation(String id) {
+		
+		JsonDocument jdoc = JsonDocument.create(id);
+		jdoc = bucket.remove(id);
+		
+		
+		
+		return observation;
+	}*/
 	
 }

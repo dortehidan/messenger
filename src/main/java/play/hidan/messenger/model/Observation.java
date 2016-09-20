@@ -8,11 +8,11 @@ public class Observation {
 
 	//ressource information	
 	private String docId; // obs::bp::unique id (could be GUID)
-	private String ressourceType; //like "Observation"
+	private String resourceType; //like "Observation"
 	private String subType; //like "blood-pressure"
 	
 	//identifier
-	private String system;  // "Diabetes-app"
+	private String systemId;  // "Diabetes-app"
 	//private String deviceId; // like mobile phone mac-address
 	
 	//Subject
@@ -35,7 +35,7 @@ public class Observation {
 	
 	public Observation() {
 		this.docId = "obs:" + UUID.randomUUID().toString();
-		this.ressourceType = "observation";
+		this.resourceType = "observation";
 		this.observationCreated = new Date();
 		
 	}
@@ -63,12 +63,12 @@ public class Observation {
 	}
 
 
-	public String getRessourceType() {
-		return ressourceType;
+	public String getResourceType() {
+		return resourceType;
 	}
 
-	public void setRessourceType(String ressourceType) {
-		this.ressourceType = ressourceType;
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
 	}
 
 	public String getSubType() {
@@ -79,12 +79,12 @@ public class Observation {
 		this.subType = subType;
 	}
 
-	public String getSystem() {
-		return system;
+	public String getSystemId() {
+		return systemId;
 	}
 
-	public void setSystem(String system) {
-		this.system = system;
+	public void setSystemId(String systemId) {
+		this.systemId = systemId;
 	}
 
 	public String getUserId() {
@@ -129,7 +129,7 @@ public class Observation {
 
 	@Override
 	public String toString() {
-		return "Observation [subType=" + subType + ", system=" + system
+		return "Observation [subType=" + subType + ", system=" + systemId
 				+ ", userId=" + userId + ", observationState="
 				+ observationState + ", observationCreated="
 				+ observationCreated + "]";

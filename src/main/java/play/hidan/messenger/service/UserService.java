@@ -51,7 +51,9 @@ public class UserService {
  		for (N1qlQueryRow row : bucket.query(q)) {
 
  			JsonObject j = row.value();
- 			User u = new User(j.getString("userId"));
+ 			//User u = new User(j.getString("userId"));
+ 			User u = new User(j.getString("userName"));
+ 			u.setUserid(j.getString("userId"));
  			u.setUserName(j.getString("userName"));
  			u.setFirstName(j.getString("firstName"));
  			u.setLastName(j.getString("lastName"));

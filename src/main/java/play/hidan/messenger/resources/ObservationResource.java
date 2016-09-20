@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -24,10 +25,20 @@ public class ObservationResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Observation> getMessages() {
-        return observationService.getAllObservations();
+	public List<Observation> getObservation(@HeaderParam("customSystemId") String systemId,
+										 @HeaderParam("customUserId") String userId) {
+        return observationService.getAllObservations(systemId,userId);
     }
-	
+
+	@GET
+	@Path("/subtype/{subtype}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Observation> getObservationBySubtype(@PathParam("subtype") String subType,
+											@HeaderParam("customSystemId") String systemId,
+											@HeaderParam("customUserId") String userId) {
+        return observationService.getObservationsBySubtype(systemId, userId, subType);
+    }
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -52,10 +63,10 @@ public class ObservationResource {
 //	}
 //	
 //	
-//	@GET
-//	@Path("/{messageId}")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Message getMessage(@PathParam("messageId") long id) {
-//		return messageservice.getMessageById(id);
-//	}
+	@GET
+	@Path("/{observationId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Observation getObservation(@PathParam("observationId") String id) {
+		return observationService.getObservationById(id);
+	}
 }
